@@ -17,7 +17,7 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        cc.director.setDisplayStats(false);
+        //cc.director.setDisplayStats(false);
         cc.director.getPhysicsManager().enabled = true;
         cc.director.getPhysicsManager().gravity = cc.v2(0, 0);
 
@@ -54,25 +54,25 @@ cc.Class({
 
     updateTireStreak () {
         if (!!this.tireStreak_left) {
-            this.tireStreak_left.position = cc.pSub(this.posTireLeft.convertToWorldSpace(cc.v2(0, 0)), cc.v2(cc.winSize.width / 2, cc.winSize.height / 2));
-            this.tireStreak_right.position = cc.pSub(this.posTireRight.convertToWorldSpace(cc.v2(0, 0)), cc.v2(cc.winSize.width / 2, cc.winSize.height / 2));
+            this.tireStreak_left.position = this.posTireLeft.convertToWorldSpace(cc.v2(0, 0)).sub(cc.v2(cc.winSize.width / 2, cc.winSize.height / 2));
+            this.tireStreak_right.position = this.posTireRight.convertToWorldSpace(cc.v2(0, 0)).sub(cc.v2(cc.winSize.width / 2, cc.winSize.height / 2));
         }
     },
 
     goFront () {
-        let speedX = 2000 * Math.sin(this.carHead.rotation * Math.PI / 180);
-        let speedY = 2000 * Math.cos(this.carHead.rotation * Math.PI / 180);
+        let speedX = 2000 * Math.sin(-this.carHead.angle * Math.PI / 180);
+        let speedY = 2000 * Math.cos(-this.carHead.angle * Math.PI / 180);
         this.carHead.getComponent(cc.RigidBody).linearVelocity = cc.v2(speedX, speedY);
     },
 
     // called every frame
     update: function (dt) {
         this.goFront();
-        this.carHead.rotation = cc.radiansToDegrees(cc.pAngleSigned(cc.pSub(this.carHead.position, this.carTail.position), cc.p(0, 1)));
-        this.line.rotation = cc.radiansToDegrees(cc.pAngleSigned(cc.pSub(this.carControl.position, this.carHead.position), cc.p(1, 0)));
+        this.carHead.angle = -cc.misc.radiansToDegrees( (cc.v2(this.carHead.position.x, this.carHead.position.y).sub( cc.v2(this.carTail.position.x, this.carTail.position.y) )).signAngle(cc.v2(0, 1)));
+        this.line.angle = -cc.misc.radiansToDegrees((cc.v2(this.carControl.position.x, this.carControl.position.y).sub(cc.v2(this.carHead.position.x, this.carHead.position.y))).signAngle(cc.v2(1, 0)));
         this.updateTireStreak();
 
-        // this.cameraNode.position = this.carHead.position;
+        //this.cameraNode.position = this.carHead.position;
 
         // this.carTail.getComponent(cc.MotionStreak)._onNodePositionChanged();
     },
